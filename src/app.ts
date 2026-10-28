@@ -1,6 +1,7 @@
 import Express from "express";
 import { errorHandler } from "./middlewares/errorHandling.js";
 import router from "./routes/index.js";
+import { HttpError } from "./errors/HttpErrpr.js";
 
 const app = Express();
 
