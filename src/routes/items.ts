@@ -1,6 +1,6 @@
 import Express from "express";
 import { prisma } from "../prisma.js";
-import { HttpError } from "../errors/HttpErrpr.js";
+import { HttpError } from "../errors/HttpError.js";
 
 const itemsRouter = Express.Router();
 
@@ -28,6 +28,18 @@ itemsRouter.get('/:id', async (req, res, next) => {
         res.json(item)
     } catch (error) {
         next(error)
+    }
+})
+
+itemsRouter.post('/', async (req, res, next) => {
+    try {
+        const { name, quantity, categoryId } = req.body;
+        const response = prisma.stockAccount.create({
+            data: { name, quantity, categoryId }
+        });
+        res.status(201).json(response);
+    } catch (error) {
+        next(error);
     }
 })
 

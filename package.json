@@ -7,7 +7,7 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest",
+    "test": "node --env-file=.env.test --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles",
     "dev": "nodemon --exec \"node --env-file=.env --import tsx\" ./src/index.ts"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import type { NextFunction, Request, Response } from "express";
-import { errorHandler } from "../src/middlewares/errorHandling.js";
-import { HttpError } from "../src/errors/HttpErrpr.js";
+import { errorHandler } from "../src/middlewares/errorHandler.js";
+import { HttpError } from "../src/errors/HttpError.js";
 
 describe("Error handler", () => {
     it("Respond with status 500", () => {
