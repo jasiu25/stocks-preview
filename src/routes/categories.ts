@@ -42,4 +42,29 @@ categoriesRouter.post('/', async (req, res, next) => {
     }
 })
 
+categoriesRouter.delete('/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await prisma.categories.delete({
+            where: { id: parseInt(id) },
+        });
+        res.sendStatus(204);
+    } catch (error) {
+        next(error)
+    }
+})
+
+categoriesRouter.patch('/', async (req, res, next) => {
+    try {
+        const { id, name } = req.body;
+        await prisma.categories.update({
+            where: { id: parseInt(id) },
+            data: { name },
+        });
+        res.sendStatus(204);
+    } catch (error) {
+        next(error);
+    }
+})
+
 export default categoriesRouter;

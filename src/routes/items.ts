@@ -34,12 +34,38 @@ itemsRouter.get('/:id', async (req, res, next) => {
 itemsRouter.post('/', async (req, res, next) => {
     try {
         const { name, quantity, categoryId } = req.body;
-        const response = prisma.stockAccount.create({
-            data: { name, quantity, categoryId }
+        const response = await prisma.stockAccount.create({
+            data: { name, quantity, categoryId },
+            select: { id: true },
         });
         res.status(201).json(response);
     } catch (error) {
         next(error);
+    }
+})
+
+itemsRouter.delete(`/:id`, async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await prisma.stockAccount.delete({
+            where: { id: parseInt(id) },
+        });
+        res.sendStatus(204);
+    } catch (error) {
+        next(error);
+    }
+})
+
+itemsRouter.patch('/', async (req, res, next) => {
+    try {
+        const { id, name, quantity, categoryId } = req.body;
+        await prisma.stockAccount.update({
+            where: { id: parseInt(id) },
+            data: { name, quantity, categoryId },
+        });
+        res.sendStatus(204);
+    } catch (error) {
+        next(error)
     }
 })
 

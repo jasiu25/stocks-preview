@@ -4,42 +4,32 @@ import app from '../src/app.js';
 import { prisma } from '../src/prisma.js';
 
 describe("Items endpoint", () => {
-    let itemId: number;
-    let createdItemId: number;
-    let categoryId: number;
-    const quantity = 3;
+    // let item.id: number;
     const suffix = Date.now().toString();
-    const itemName = `test-item-${suffix}`;
     const categoryName = `test-category-${suffix}`;
 
-    beforeAll(async () => {
-        const category = await prisma.categories.create({
-            data: { name: categoryName }
-        });
-        categoryId = category.id;
+    const item = {
+        id: Number,
+        name: `test-item-${suffix}`,
+        quantity: 3,
+        categoryId: 1
+    }
 
-        const item = await prisma.stockAccount.create({
-            data: {
-                name: itemName,
-                quantity,
-                categoryId,
-            },
-        });
-        itemId = item.id;
+    beforeAll(async () => {
+        try {
+            const category = await prisma.categories.create({
+                data: { name: categoryName }
+            });
+            item.categoryId = category.id;
+        } catch (error) {
+            return error;
+        }
     });
 
     afterAll(async () => {
         try {
-            if (itemId) {
-                await prisma.stockAccount.deleteMany({ where: { id: itemId } });
-            }
-
-            if (createdItemId) {
-                await prisma.stockAccount.deleteMany({ where: { id: createdItemId } });
-            }
-            
-            if (categoryId) {
-                await prisma.categories.deleteMany({ where: { id: categoryId } });
+            if (item.categoryId) {
+                await prisma.categories.deleteMany({ where: { id: item.categoryId } });
             }
         } catch (error) {
             return error;
@@ -48,29 +38,43 @@ describe("Items endpoint", () => {
         }
     });
 
-    it("Returns item and it's category", async () => {
-        const response = await request(app).get(`/api/v1/items/${itemId}`).expect(200);
-
-        expect(response.body).toMatchObject({
-            id: itemId,
-            name: itemName,
-            quantity,
-            categoryId,
-            category: {
-                id: categoryId,
-                name: categoryName,
-            }
-        })
+    it("Inserts given item", async () => {
+        const response = await request(app).post('/api/v1/items/').send(item).expect(201);
+        item.id = response.body.id;
     });
 
-    it("Inserts given item", async () => {
-        const item = {
-            name: itemName,
-            quantity,
-            categoryId
-        }
+    it("Returns item and it's category", async () => {
+        const response = await request(app).get(`/api/v1/items/${item.id}`).expect(200);
 
-        const response = await request(app).post('/api/v1/items/').send(item).expect(201);
-        createdItemId = response.body.id
+        expect(response.body).toMatchObject({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            categoryId: item.categoryId,
+            category: {
+                id: item.categoryId,
+                name: categoryName,
+            }
+        });
+    });
+
+    it('changes items name and quantity', async () => {
+        const newItem = structuredClone(item);
+        newItem.name = `new-test-item-${suffix}`;
+        newItem.quantity = 1;
+        
+        await request(app).patch(`/api/v1/items/`).send(newItem).expect(204);
+        const response = await request(app).get(`/api/v1/items/${item.id}`);
+
+        expect(response.body).toMatchObject({
+            id: item.id,
+            name: newItem.name,
+            quantity: newItem.quantity
+        });
+    })
+
+    it("Deletes item", async () => {
+        await request(app).delete(`/api/v1/items/${item.id}`).expect(204);
+        await request(app).get(`/api/v1/items/${item.id}`).expect(404);
     })
 })
