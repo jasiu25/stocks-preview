@@ -1,0 +1,46 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgers:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U admin -d stockPreviews_test"
+          --heatlh-interval 10s
+          --heatlh-timeout 5s
+          --heatlh-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      
+      - name: Install dependecies
+        run: npm ci
+        working-directory: server
+
+      - name: Run tests
+        run: npm test -- --runInBand
+        working-directory: server
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+
