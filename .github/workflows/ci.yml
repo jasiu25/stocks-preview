@@ -41,6 +41,12 @@ jobs:
         run: npm ci
         working-directory: server
 
+      - name: Run database migrations
+        run: npx prisma migrate deploy
+        working-directory: server
+        env:
+          DATABASE_URL: 'postgresql://admin:Marachewka1@localhost:5432/stockPreviews_test?schema=public'
+
       - name: Run tests
         run: npm test -- --runInBand
         working-directory: server

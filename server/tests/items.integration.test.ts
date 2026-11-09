@@ -4,12 +4,11 @@ import app from '../src/app.js';
 import { prisma } from '../src/prisma.js';
 
 describe("Items endpoint", () => {
-    // let item.id: number;
     const suffix = Date.now().toString();
     const categoryName = `test-category-${suffix}`;
 
     const item = {
-        id: Number,
+        id: 1,
         name: `test-item-${suffix}`,
         quantity: 3,
         categoryId: 1
