@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
+import { afterAll, describe, expect, it } from '@jest/globals';
 import request from "supertest"
 import app from '../src/app.js';
 import { prisma } from '../src/prisma.js';

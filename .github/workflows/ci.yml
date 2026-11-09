@@ -54,3 +54,6 @@ jobs:
           NODE_OPTIONS: --experimental-vm-modules
           DATABASE_URL: 'postgresql://admin:Marachewka1@localhost:5432/stockPreviews_test?schema=public'
 
+      - name: Lint
+        run: npm run lint
+        working-directory: server

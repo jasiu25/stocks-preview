@@ -1,7 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import { HttpError } from "../errors/HttpError.js";
 
-export const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (error: Error, req: Request, res: Response) => {
     console.log(error);
 
     if (error instanceof HttpError) {
