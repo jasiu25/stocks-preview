@@ -46,4 +46,5 @@ jobs:
         working-directory: server
         env:
           NODE_OPTIONS: --experimental-vm-modules
+          DATABASE_URL: 'postgresql://admin:Marachewka1@localhost:5432/stockPreviews_test?schema=public'
 
